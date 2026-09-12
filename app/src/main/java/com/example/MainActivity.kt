@@ -7,15 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +36,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -54,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -115,105 +122,168 @@ class MainActivity : ComponentActivity() {
                     NavItem("Riwayat", Icons.Default.History, "nav_history")
                 )
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    contentWindowInsets = WindowInsets.safeDrawing,
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.AutoAwesome,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onPrimary,
-                                            modifier = Modifier.size(16.dp)
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    val isExpandedScreen = maxWidth >= 720.dp
+
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        contentWindowInsets = WindowInsets.safeDrawing,
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
+                        topBar = {
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(30.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.AutoAwesome,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onPrimary,
+                                                modifier = Modifier.size(17.dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "TnError Prompt",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            letterSpacing = 0.5.sp
                                         )
                                     }
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "TnError Prompt",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                }
-                            },
-                            actions = {
-                                if (user?.isPro == true) {
-                                    Surface(
-                                        shape = RoundedCornerShape(8.dp),
-                                        color = Color(0xFFF59E0B),
-                                        modifier = Modifier.padding(end = 12.dp)
-                                    ) {
-                                        Text(
-                                            text = "PRO",
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
+                                },
+                                actions = {
+                                    if (user?.isPro == true) {
+                                        Surface(
+                                            shape = RoundedCornerShape(8.dp),
+                                            color = Color(0xFFF59E0B),
+                                            modifier = Modifier.padding(end = 16.dp)
+                                        ) {
+                                            Text(
+                                                text = "PRO",
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            )
-                        )
-                    },
-                    bottomBar = {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            tonalElevation = 6.dp
-                        ) {
-                            navItems.forEachIndexed { index, item ->
-                                NavigationBarItem(
-                                    selected = selectedTab == index,
-                                    onClick = { selectedTab = index },
-                                    icon = {
-                                        Icon(
-                                            imageVector = item.icon,
-                                            contentDescription = item.title
-                                        )
-                                    },
-                                    label = {
-                                        Text(
-                                            text = item.title,
-                                            fontSize = 10.5.sp,
-                                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                                        )
-                                    },
-                                    modifier = Modifier.testTag(item.testTag),
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                                    )
+                                },
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.surface
                                 )
+                            )
+                        },
+                        bottomBar = {
+                            if (!isExpandedScreen) {
+                                NavigationBar(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    tonalElevation = 4.dp
+                                ) {
+                                    navItems.forEachIndexed { index, item ->
+                                        NavigationBarItem(
+                                            selected = selectedTab == index,
+                                            onClick = { selectedTab = index },
+                                            alwaysShowLabel = true,
+                                            icon = {
+                                                Icon(
+                                                    imageVector = item.icon,
+                                                    contentDescription = item.title
+                                                )
+                                            },
+                                            label = {
+                                                Text(
+                                                    text = item.title,
+                                                    fontSize = 10.sp,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
+                                                )
+                                            },
+                                            modifier = Modifier.testTag(item.testTag),
+                                            colors = NavigationBarItemDefaults.colors(
+                                                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
-                    }
-                ) { innerPadding ->
-                    Crossfade(
-                        targetState = selectedTab,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        label = "screen_crossfade"
-                    ) { tab ->
-                        when (tab) {
-                            0 -> PrompterStudioScreen(viewModel = viewModel)
-                            1 -> GeneratorScreen(viewModel = viewModel)
-                            2 -> OptimizerScreen(viewModel = viewModel)
-                            3 -> CodeToPromptScreen(viewModel = viewModel)
-                            4 -> HistoryScreen(viewModel = viewModel)
+                    ) { innerPadding ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            if (isExpandedScreen) {
+                                NavigationRail(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    header = {
+                                        Spacer(modifier = Modifier.padding(top = 8.dp))
+                                    },
+                                    modifier = Modifier.fillMaxHeight()
+                                ) {
+                                    navItems.forEachIndexed { index, item ->
+                                        NavigationRailItem(
+                                            selected = selectedTab == index,
+                                            onClick = { selectedTab = index },
+                                            alwaysShowLabel = true,
+                                            icon = {
+                                                Icon(
+                                                    imageVector = item.icon,
+                                                    contentDescription = item.title
+                                                )
+                                            },
+                                            label = {
+                                                Text(
+                                                    text = item.title,
+                                                    fontSize = 11.sp,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
+                                                )
+                                            },
+                                            modifier = Modifier.testTag(item.testTag),
+                                            colors = NavigationRailItemDefaults.colors(
+                                                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            BoxWithConstraints(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .weight(1f),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                val contentMaxWidth = if (maxWidth > 680.dp) 680.dp else maxWidth
+
+                                Crossfade(
+                                    targetState = selectedTab,
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .widthIn(max = contentMaxWidth),
+                                    label = "screen_crossfade"
+                                ) { tab ->
+                                    when (tab) {
+                                        0 -> PrompterStudioScreen(viewModel = viewModel)
+                                        1 -> GeneratorScreen(viewModel = viewModel)
+                                        2 -> OptimizerScreen(viewModel = viewModel)
+                                        3 -> CodeToPromptScreen(viewModel = viewModel)
+                                        4 -> HistoryScreen(viewModel = viewModel)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

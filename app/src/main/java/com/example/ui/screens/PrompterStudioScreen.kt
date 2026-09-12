@@ -84,6 +84,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -193,7 +194,7 @@ fun PrompterStudioScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         // Hero Header
         Card(
@@ -330,14 +331,23 @@ fun PrompterStudioScreen(
                 selected = selectedStudioTab == 0,
                 onClick = { selectedStudioTab = 0 },
                 text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Speed,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Teleprompter Live", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "Teleprompter Live",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             )
@@ -345,14 +355,23 @@ fun PrompterStudioScreen(
                 selected = selectedStudioTab == 1,
                 onClick = { selectedStudioTab = 1 },
                 text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Psychology,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("AI Prompter Lab", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "AI Prompter Lab",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             )
@@ -495,7 +514,7 @@ fun PrompterStudioScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         // Play / Pause Button
                         Button(
@@ -504,7 +523,9 @@ fun PrompterStudioScreen(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (isPreviewPlaying) Color(0xFFEF4444) else Color(0xFF10B981)
                             ),
-                            modifier = Modifier.weight(1.2f)
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
                         ) {
                             Icon(
                                 imageVector = if (isPreviewPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -512,10 +533,14 @@ fun PrompterStudioScreen(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(if (isPreviewPlaying) "Jeda Scroll" else "Putar Scroll")
+                            Text(
+                                text = if (isPreviewPlaying) "Jeda Scroll" else "Putar Scroll",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         // Rewind to top
                         IconButton(
@@ -524,100 +549,133 @@ fun PrompterStudioScreen(
                                 coroutineScope.launch { previewScrollState.scrollTo(0) }
                             },
                             modifier = Modifier
-                                .clip(CircleShape)
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(Color(0xFF1E293B))
                         ) {
-                            Icon(Icons.Default.RestartAlt, contentDescription = "Ulang", tint = Color.White)
+                            Icon(Icons.Default.RestartAlt, contentDescription = "Ulang", tint = Color.White, modifier = Modifier.size(20.dp))
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         // Mirror Mode Toggle
                         IconButton(
                             onClick = { viewModel.togglePrompterMirrorMode() },
                             modifier = Modifier
-                                .clip(CircleShape)
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(if (isMirrorMode) Color(0xFFF59E0B) else Color(0xFF1E293B))
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Flip,
                                 contentDescription = "Mode Cermin",
-                                tint = if (isMirrorMode) Color.Black else Color.White
+                                tint = if (isMirrorMode) Color.Black else Color.White,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         // Focus Guide Toggle
                         IconButton(
                             onClick = { viewModel.togglePrompterFocusGuide() },
                             modifier = Modifier
-                                .clip(CircleShape)
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(if (isFocusGuide) Color(0xFF3B82F6) else Color(0xFF1E293B))
                         ) {
                             Icon(
                                 imageVector = if (isFocusGuide) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription = "Garis Panduan",
-                                tint = Color.White
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    // Speed Slider Control
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Speed,
-                            contentDescription = null,
-                            tint = Color(0xFF38BDF8),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Kecepatan: ${String.format(Locale.US, "%.1fx", scrollSpeed)}",
-                            color = Color(0xFFE2E8F0),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.width(110.dp)
-                        )
+                    // Speed Slider Control (Full width slider for smooth ergonomics)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Speed,
+                                    contentDescription = null,
+                                    tint = Color(0xFF38BDF8),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Kecepatan Scroll",
+                                    color = Color(0xFFE2E8F0),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color(0xFF1E293B)
+                            ) {
+                                Text(
+                                    text = String.format(Locale.US, "%.1fx", scrollSpeed),
+                                    color = Color(0xFF38BDF8),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
                         Slider(
                             value = scrollSpeed,
                             onValueChange = { viewModel.setPrompterSpeed(it) },
                             valueRange = 1.0f..10.0f,
                             steps = 17,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
 
-                    // Font Size Slider Control
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.TextFields,
-                            contentDescription = null,
-                            tint = Color(0xFFA78BFA),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Ukuran Font: ${fontSize}sp",
-                            color = Color(0xFFE2E8F0),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.width(110.dp)
-                        )
+                    // Font Size Slider Control (Full width slider for smooth ergonomics)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.TextFields,
+                                    contentDescription = null,
+                                    tint = Color(0xFFA78BFA),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Ukuran Teks",
+                                    color = Color(0xFFE2E8F0),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color(0xFF1E293B)
+                            ) {
+                                Text(
+                                    text = "${fontSize}sp",
+                                    color = Color(0xFFA78BFA),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
                         Slider(
                             value = fontSize.toFloat(),
                             onValueChange = { viewModel.setPrompterFontSize(it.toInt()) },
                             valueRange = 18f..44f,
                             steps = 12,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -691,33 +749,40 @@ fun PrompterStudioScreen(
                     // Quick Actions
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
                             onClick = { viewModel.savePrompterAsPrompt() },
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.weight(1f)
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
                         ) {
                             Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Simpan", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Simpan", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
 
                         OutlinedButton(
                             onClick = { viewModel.copyToClipboard(prompterContent, prompterTitle) },
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.weight(1f)
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
                         ) {
                             Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Salin", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Salin", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
 
                         OutlinedButton(
                             onClick = { viewModel.resetPrompterToStarter() },
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.size(44.dp),
+                            contentPadding = PaddingValues(0.dp)
                         ) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Reset")
+                            Icon(Icons.Default.Refresh, contentDescription = "Reset", modifier = Modifier.size(18.dp))
                         }
                     }
                 }
@@ -794,7 +859,10 @@ fun PrompterStudioScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.DataObject,
                                 contentDescription = null,
@@ -803,11 +871,15 @@ fun PrompterStudioScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Variabel Dinamis {{placeholder}}",
+                                text = "Variabel Dinamis",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Surface(
                             shape = RoundedCornerShape(8.dp),

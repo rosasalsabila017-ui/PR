@@ -259,56 +259,82 @@ fun PromptDetailDialog(
                             onDismiss()
                         },
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
                     ) {
                         Icon(imageVector = Icons.Default.Speed, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Buka di Studio Prompter Live", fontWeight = FontWeight.Bold)
+                        Text("Buka di Studio Prompter Live", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
+                // Primary 1-Tap Copy Button (Full-width for effortless tapping on any device)
+                Button(
+                    onClick = {
+                        onCopy(prompt.content)
+                        copied = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .testTag("detail_copy_to_clipboard_button"),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (copied) Color(0xFF10B981) else MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
+                        contentDescription = "Salin ke Clipboard",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (copied) "Tersalin ke Clipboard!" else "Salin ke Clipboard",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Secondary Row: Share & Favorite
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(
-                        onClick = {
-                            onCopy(prompt.content)
-                            copied = true
-                        },
+                    OutlinedButton(
+                        onClick = onShare,
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .weight(1f)
-                            .testTag("detail_copy_to_clipboard_button"),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (copied) Color(0xFF10B981) else MaterialTheme.colorScheme.primary
-                        )
+                            .height(44.dp)
                     ) {
-                        Icon(
-                            imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
-                            contentDescription = "Salin ke Clipboard",
-                            modifier = Modifier.size(18.dp)
-                        )
+                        Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(17.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (copied) "Tersalin ke Clipboard!" else "Salin ke Clipboard")
+                        Text("Bagikan", fontSize = 13.sp)
                     }
 
                     OutlinedButton(
-                        onClick = onShare,
-                        shape = RoundedCornerShape(12.dp)
+                        onClick = onToggleFavorite,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Bagikan")
-                    }
-
-                    IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (prompt.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorit",
-                            tint = if (prompt.isFavorite) Color(0xFFEF4444) else MaterialTheme.colorScheme.outline
+                            tint = if (prompt.isFavorite) Color(0xFFEF4444) else MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.size(17.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (prompt.isFavorite) "Favorit" else "Simpan",
+                            fontSize = 13.sp
                         )
                     }
                 }

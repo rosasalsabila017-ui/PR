@@ -154,11 +154,14 @@ fun ResultDisplayCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f))
-                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
                                 color = Color(0xFF10B981).copy(alpha = 0.15f)
@@ -172,14 +175,18 @@ fun ResultDisplayCard(
                                     fontSize = 10.sp
                                 )
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "ChatGPT • Claude • Gemini",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 11.sp
+                                fontSize = 11.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         FilledTonalButton(
                             onClick = {
@@ -187,7 +194,7 @@ fun ResultDisplayCard(
                                 copied = true
                             },
                             modifier = Modifier
-                                .height(30.dp)
+                                .height(32.dp)
                                 .testTag("quick_copy_chip_button"),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
@@ -206,7 +213,8 @@ fun ResultDisplayCard(
                                 text = if (copied) "Tersalin!" else "Salin Cepat",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp
+                                fontSize = 11.sp,
+                                maxLines = 1
                             )
                         }
                     }
@@ -249,9 +257,11 @@ fun ResultDisplayCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (copied) "Tersalin ke Clipboard! Siap Dipakai" else "Salin ke Clipboard",
+                    text = if (copied) "Tersalin ke Clipboard!" else "Salin ke Clipboard",
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -266,7 +276,9 @@ fun ResultDisplayCard(
                     FilledTonalButton(
                         onClick = { onOpenPrompter(prompt) },
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1.1f)
+                            .height(44.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Speed,
@@ -274,14 +286,21 @@ fun ResultDisplayCard(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Prompter Live")
+                        Text(
+                            text = "Prompter Live",
+                            fontSize = 13.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
 
                 OutlinedButton(
                     onClick = onShare,
                     shape = RoundedCornerShape(12.dp),
-                    modifier = if (onOpenPrompter != null) Modifier.weight(0.8f) else Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .weight(if (onOpenPrompter != null) 0.9f else 1f)
+                        .height(44.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -289,7 +308,12 @@ fun ResultDisplayCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Bagikan")
+                    Text(
+                        text = "Bagikan",
+                        fontSize = 13.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
