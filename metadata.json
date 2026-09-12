@@ -1,5 +1,5 @@
 {
-  "name": "Prompt Cepat AI",
+  "name": "TnError Prompt",
   "description": "Aplikasi cerdas untuk generator prompt, optimasi prompt, analisis kode ke prompt, serta manajemen riwayat dan favorit.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

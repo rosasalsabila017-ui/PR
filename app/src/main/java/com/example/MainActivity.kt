@@ -23,11 +23,12 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -60,7 +61,7 @@ import com.example.ui.screens.CodeToPromptScreen
 import com.example.ui.screens.GeneratorScreen
 import com.example.ui.screens.HistoryScreen
 import com.example.ui.screens.OptimizerScreen
-import com.example.ui.screens.ProfileSettingsScreen
+import com.example.ui.screens.PrompterStudioScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.viewmodel.PromptViewModel
 
@@ -87,6 +88,15 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
 
+                val requestedNavTab by viewModel.requestedNavTab.collectAsStateWithLifecycle()
+
+                LaunchedEffect(requestedNavTab) {
+                    requestedNavTab?.let { tabIndex ->
+                        selectedTab = tabIndex
+                        viewModel.clearRequestedNavTab()
+                    }
+                }
+
                 LaunchedEffect(userMessage) {
                     userMessage?.let { msg ->
                         snackbarHostState.showSnackbar(
@@ -98,11 +108,11 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navItems = listOf(
+                    NavItem("Prompter", Icons.Default.Speed, "nav_prompter"),
                     NavItem("Generator", Icons.Default.Bolt, "nav_generator"),
                     NavItem("Perbaikan", Icons.Default.Tune, "nav_optimizer"),
                     NavItem("Dari Kode", Icons.Default.Code, "nav_code"),
-                    NavItem("Riwayat", Icons.Default.History, "nav_history"),
-                    NavItem("Profil", Icons.Default.Person, "nav_profile")
+                    NavItem("Riwayat", Icons.Default.History, "nav_history")
                 )
 
                 Scaffold(
@@ -129,7 +139,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Prompt Cepat AI",
+                                        text = "TnError Prompt",
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.ExtraBold,
                                         letterSpacing = 0.5.sp
@@ -176,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                     label = {
                                         Text(
                                             text = item.title,
-                                            fontSize = 11.sp,
+                                            fontSize = 10.5.sp,
                                             fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
                                         )
                                     },
@@ -199,11 +209,11 @@ class MainActivity : ComponentActivity() {
                         label = "screen_crossfade"
                     ) { tab ->
                         when (tab) {
-                            0 -> GeneratorScreen(viewModel = viewModel)
-                            1 -> OptimizerScreen(viewModel = viewModel)
-                            2 -> CodeToPromptScreen(viewModel = viewModel)
-                            3 -> HistoryScreen(viewModel = viewModel)
-                            4 -> ProfileSettingsScreen(viewModel = viewModel)
+                            0 -> PrompterStudioScreen(viewModel = viewModel)
+                            1 -> GeneratorScreen(viewModel = viewModel)
+                            2 -> OptimizerScreen(viewModel = viewModel)
+                            3 -> CodeToPromptScreen(viewModel = viewModel)
+                            4 -> HistoryScreen(viewModel = viewModel)
                         }
                     }
                 }

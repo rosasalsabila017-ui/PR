@@ -199,7 +199,10 @@ fun HistoryScreen(
                         onCopy = { viewModel.copyToClipboard(it, prompt.title) },
                         onShare = { viewModel.sharePrompt(context, prompt) },
                         onToggleFavorite = { viewModel.toggleFavorite(prompt) },
-                        onDelete = { viewModel.deletePrompt(prompt) }
+                        onDelete = { viewModel.deletePrompt(prompt) },
+                        onOpenPrompter = { p ->
+                            viewModel.loadIntoPrompter(p.title, p.content, launchFullscreen = false)
+                        }
                     )
                 }
             }
@@ -213,7 +216,10 @@ fun HistoryScreen(
             onDismiss = { selectedPromptForDetail = null },
             onCopy = { viewModel.copyToClipboard(it, prompt.title) },
             onShare = { viewModel.sharePrompt(context, prompt) },
-            onToggleFavorite = { viewModel.toggleFavorite(prompt) }
+            onToggleFavorite = { viewModel.toggleFavorite(prompt) },
+            onOpenPrompter = { p ->
+                viewModel.loadIntoPrompter(p.title, p.content, launchFullscreen = false)
+            }
         )
     }
 }

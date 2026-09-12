@@ -312,7 +312,10 @@ fun CodeToPromptScreen(
                         prompt = result,
                         onCopy = { viewModel.copyToClipboard(it, "Prompt Analisis Kode") },
                         onShare = { viewModel.sharePrompt(context, result) },
-                        onToggleFavorite = { viewModel.toggleFavorite(result) }
+                        onToggleFavorite = { viewModel.toggleFavorite(result) },
+                        onOpenPrompter = { p ->
+                            viewModel.loadIntoPrompter(p.title, p.content, launchFullscreen = false)
+                        }
                     )
                 }
             }

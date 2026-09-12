@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Prompt Cepat AI"
+rootProject.name = "TnError Prompt"
 
 include(":app")

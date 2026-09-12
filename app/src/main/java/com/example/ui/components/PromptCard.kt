@@ -16,12 +16,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,15 +33,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.PromptEntity
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,8 +61,18 @@ fun PromptCard(
     onShare: () -> Unit,
     onToggleFavorite: () -> Unit,
     onDelete: () -> Unit,
+    onOpenPrompter: ((PromptEntity) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    var copied by remember { mutableStateOf(false) }
+
+    LaunchedEffect(copied) {
+        if (copied) {
+            delay(2500)
+            copied = false
+        }
+    }
+
     val categoryBadge = when (prompt.category) {
         "GENERATOR" -> Triple("Generator", MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer)
         "OPTIMIZER" -> Triple("Perbaikan", Color(0xFF10B981).copy(alpha = 0.2f), Color(0xFF047857))
@@ -187,14 +206,32 @@ fun PromptCard(
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (onOpenPrompter != null) {
+                        IconButton(
+                            onClick = { onOpenPrompter(prompt) },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Speed,
+                                contentDescription = "Buka di Prompter",
+                                tint = Color(0xFF38BDF8),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
                     IconButton(
-                        onClick = { onCopy(prompt.content) },
-                        modifier = Modifier.size(36.dp)
+                        onClick = {
+                            onCopy(prompt.content)
+                            copied = true
+                        },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .testTag("prompt_card_copy_button")
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ContentCopy,
-                            contentDescription = "Salin",
-                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
+                            contentDescription = "Salin ke Clipboard",
+                            tint = if (copied) Color(0xFF10B981) else MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
                         )
                     }

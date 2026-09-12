@@ -12,6 +12,7 @@ import com.example.data.local.PromptEntity
 import com.example.data.local.UserEntity
 import com.example.data.repository.PromptRepository
 import com.example.ui.model.PromptPresets
+import com.example.ui.model.PrompterPresets
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +61,16 @@ class PromptViewModel(application: Application) : AndroidViewModel(application) 
     val analysisMode = MutableStateFlow("BUG_FIX") // "BUG_FIX", "EXPLAIN", "UNIT_TEST", "REFACTOR"
     val isAnalyzingCode = MutableStateFlow(false)
     val codePromptResult = MutableStateFlow<PromptEntity?>(null)
+
+    // Prompter Studio State
+    val prompterTitle = MutableStateFlow("Studio Script AI")
+    val prompterContent = MutableStateFlow(PrompterPresets.starterPrompterScript)
+    val prompterScrollSpeed = MutableStateFlow(3.0f) // 1.0f to 10.0f
+    val prompterFontSize = MutableStateFlow(24) // 18 to 44 sp
+    val prompterIsMirrorMode = MutableStateFlow(false)
+    val prompterIsFocusGuideEnabled = MutableStateFlow(true)
+    val showFullscreenTeleprompter = MutableStateFlow(false)
+    val requestedNavTab = MutableStateFlow<Int?>(null)
 
     // History & Search Filter State
     val searchQuery = MutableStateFlow("")
@@ -327,6 +338,102 @@ class PromptViewModel(application: Application) : AndroidViewModel(application) 
             val nextState = !current.isPro
             repository.updateUser(current.copy(isPro = nextState))
             showMessage(if (nextState) "Selamat! Paket Pro Aktif" else "Paket beralih ke Free Tier")
+        }
+    }
+
+    // Prompter Studio Actions
+    fun loadIntoPrompter(title: String, content: String, launchFullscreen: Boolean = false) {
+        prompterTitle.value = title.ifBlank { "Studio Script AI" }
+        prompterContent.value = content
+        if (launchFullscreen) {
+            showFullscreenTeleprompter.value = true
+        }
+        // Switch to Prompter tab (tab 0)
+        requestedNavTab.value = 0
+        showMessage("Dimuat ke Studio Prompter: $title")
+    }
+
+    fun updatePrompterContent(newContent: String) {
+        prompterContent.value = newContent
+    }
+
+    fun updatePrompterTitle(newTitle: String) {
+        prompterTitle.value = newTitle
+    }
+
+    fun setPrompterSpeed(speed: Float) {
+        prompterScrollSpeed.value = speed.coerceIn(1.0f, 10.0f)
+    }
+
+    fun setPrompterFontSize(sizeSp: Int) {
+        prompterFontSize.value = sizeSp.coerceIn(16, 48)
+    }
+
+    fun togglePrompterMirrorMode() {
+        prompterIsMirrorMode.value = !prompterIsMirrorMode.value
+        showMessage(if (prompterIsMirrorMode.value) "Mode Cermin (Mirror) Aktif" else "Mode Normal Aktif")
+    }
+
+    fun togglePrompterFocusGuide() {
+        prompterIsFocusGuideEnabled.value = !prompterIsFocusGuideEnabled.value
+    }
+
+    fun setFullscreenTeleprompter(show: Boolean) {
+        showFullscreenTeleprompter.value = show
+    }
+
+    fun clearRequestedNavTab() {
+        requestedNavTab.value = null
+    }
+
+    fun resetPrompterToStarter() {
+        prompterTitle.value = "Studio Script AI"
+        prompterContent.value = PrompterPresets.starterPrompterScript
+        showMessage("Naskah prompter direset ke naskah awal")
+    }
+
+    fun applyVariableReplacements(replacements: Map<String, String>) {
+        var updated = prompterContent.value
+        replacements.forEach { (key, value) ->
+            if (value.isNotBlank()) {
+                updated = updated.replace("{{$key}}", value)
+                updated = updated.replace("[$key]", value)
+            }
+        }
+        prompterContent.value = updated
+        showMessage("Variabel berhasil diterapkan ke naskah!")
+    }
+
+    fun insertFrameworkTemplate(frameworkKey: String) {
+        val framework = PrompterPresets.frameworks.find { it.key == frameworkKey } ?: return
+        prompterTitle.value = "${framework.name} Template"
+        prompterContent.value = framework.template
+        showMessage("Template ${framework.name} diterapkan ke Prompter!")
+    }
+
+    fun insertProTemplate(templateId: String) {
+        val template = PrompterPresets.proTemplates.find { it.id == templateId } ?: return
+        prompterTitle.value = template.title
+        prompterContent.value = template.content
+        showMessage("Template '${template.title}' dimuat ke Prompter!")
+    }
+
+    fun savePrompterAsPrompt() {
+        val content = prompterContent.value.trim()
+        if (content.isBlank()) {
+            showMessage("Naskah prompter masih kosong")
+            return
+        }
+        viewModelScope.launch {
+            val entity = PromptEntity(
+                title = prompterTitle.value.ifBlank { "Prompter Script" },
+                content = content,
+                category = "TEMPLATE",
+                topic = "Studio Prompter",
+                role = "Script Presenter"
+            )
+            val id = repository.savePrompt(entity)
+            showMessage("Naskah berhasil disimpan ke Riwayat & Koleksi!")
         }
     }
 }

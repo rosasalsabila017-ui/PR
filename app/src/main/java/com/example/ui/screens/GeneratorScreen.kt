@@ -394,7 +394,10 @@ fun GeneratorScreen(
                         prompt = prompt,
                         onCopy = { viewModel.copyToClipboard(it, "Prompt") },
                         onShare = { viewModel.sharePrompt(context, prompt) },
-                        onToggleFavorite = { viewModel.toggleFavorite(prompt) }
+                        onToggleFavorite = { viewModel.toggleFavorite(prompt) },
+                        onOpenPrompter = { p ->
+                            viewModel.loadIntoPrompter(p.title, p.content, launchFullscreen = false)
+                        }
                     )
                 }
             }
